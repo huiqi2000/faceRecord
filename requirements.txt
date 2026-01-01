@@ -1,0 +1,4 @@
+flask
+psycopg2-binary  # PostgreSQL 连接库
+python-dotenv
+cors  # 解决跨域问题
