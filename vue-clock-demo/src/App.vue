@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div >
+    <div>
       <span class="title-text">打卡系统</span>
     </div>
     <div class="clock-container">
@@ -20,7 +20,6 @@
         <!-- el-calendar：v-model 绑定当前日期，@date-change 绑定点击/切换日期事件 -->
         <el-calendar v-model="currentDate" @input="handleCalendarClick"></el-calendar>
       </div>
-
 
       <!-- 1. 下班特殊时间选择弹窗（昨天/今天） -->
       <el-dialog title="请选择打卡日期" :visible.sync="dateSelectDialogVisible" width="30%" :close-on-click-modal="false">
@@ -77,7 +76,7 @@ export default {
       const minutes = now.getMinutes()
 
       // 判断是否是下班时间且在 00:00 ~ 11:30 之间
-      if (type === '下班' && (hours < 24 || (hours === 11 && minutes <= 30))) {
+      if (type === '下班' && (hours < 11 || (hours === 11 && minutes < 30))) {
         this.dateSelectDialogVisible = true // 显示日期选择弹窗
       } else {
         // 非特殊时间，直接使用今天日期打卡
@@ -130,6 +129,7 @@ export default {
      * @param {String} recordType 打卡类型（上班/下班）
      */
     async submitClockRecord(recordDay, recordTime, recordType) {
+      // console.log('提交打卡记录：', recordDay, recordTime, recordType)
       try {
         const res = await this.$axios.post(`${this.$baseApi}/clock/add`, {
           record_day: recordDay,
@@ -193,10 +193,25 @@ export default {
      * @returns {String} 格式化后的时间
      */
     formatTime(date) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      const seconds = date.getSeconds().toString().padStart(2, '0')
-      return `${hours}:${minutes}:${seconds}`
+      // 先判断传入的是否为有效Date对象，避免报错
+      if (!(date instanceof Date) || isNaN(date.getTime())) {
+        console.error('传入的参数不是有效Date对象');
+        return ''; // 无效参数返回空字符串或自定义提示
+      }
+
+      // 获取年、月、日（日期部分）
+      const year = date.getFullYear();
+      // 月份是0-11，需要+1
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+
+      // 你的原有时间部分逻辑（保留并复用）
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+
+      // 拼接为 yyyy-MM-dd HH:mm:ss 格式并返回
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
   }
 }
@@ -216,6 +231,7 @@ export default {
   font-size: 30px;
   font-weight: bold;
 }
+
 .clock-container {
   width: 80%;
   margin: 0 auto;
@@ -245,5 +261,63 @@ export default {
 
 .dialog-btn-group {
   padding: 20px 0;
+}
+
+
+
+/* 圆圈 样式 */
+/* 日期单元格样式：保证布局合理 */
+.calendar-date-cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 原有日期文字样式（可选，可自定义） */
+.calendar-date-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  /* 与圆圈保持间距 */
+  z-index: 1;
+  /* 确保日期文字在圆圈上方 */
+}
+
+/* 两个圆圈的容器：横向排列 */
+.calendar-circle-group {
+  display: flex;
+  gap: 6px;
+  /* 两个圆圈之间的间距 */
+  z-index: 1;
+}
+
+/* 圆圈基础样式 */
+.circle {
+  display: inline-block;
+  width: 8px;
+  /* 圆圈大小 */
+  height: 8px;
+  border-radius: 50%;
+  /* 圆形 */
+  background-color: #dcdfe6;
+  /* 默认灰色 */
+}
+
+/* 第一个圆圈自定义样式（可按需修改颜色、大小） */
+.circle-1 {
+  background-color: #409eff;
+  /* 蓝色 */
+}
+
+/* 第二个圆圈自定义样式（可按需修改颜色、大小） */
+.circle-2 {
+  background-color: #f56c6c;
+  /* 红色 */
 }
 </style>

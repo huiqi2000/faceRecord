@@ -49,7 +49,7 @@ docker exec -it postgres15.6 /bin/bash
 CREATE TABLE clock_record (
     id serial primary key,  -- 直接使用 serial 类型，无需 int，自动为 int 自增
     record_day date,        -- 打卡日期
-    record_time time,       -- 打卡时间
+    record_time timestamp,       -- 打卡时间
     record_type varchar(10) -- 打卡类型：上班/下班
 );
 
