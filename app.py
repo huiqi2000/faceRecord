@@ -9,8 +9,8 @@ CORS(app)  # 允许所有跨域请求，生产环境可指定前端地址
 
 # PostgreSQL 连接配置（根据你的实际配置修改）
 PG_CONFIG = {
-    "user": "postgres",
-    "password": "",  # 替换为你的 PostgreSQL 密码
+    "user": "root",
+    "password": "root@202601",
     "host": "localhost",
     "port": "5432",
     "database": "postgres"  # 替换为你的数据库名

@@ -36,12 +36,11 @@ docker run -d \
   postgres:15.6
 
 docker run -it \
-  --name postgres15.6 \
+  --name postgres \
   -p 5432:5432 \
   -e POSTGRES_USER=root \
   -e POSTGRES_PASSWORD=root@202601 \
-  -e POSTGRES_DB=postgres \
-  postgres:15.6
+  -e POSTGRES_DB=postgres postgres:15.15-alpine
 
 
 docker exec -it postgres15.6 /bin/bash
